@@ -1,5 +1,3 @@
-package vertexcover;
-
 import java.util.Set;
 /**
  * The interface represents the graph methods which have to be implemented.
