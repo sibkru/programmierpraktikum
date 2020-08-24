@@ -1,71 +1,121 @@
-import java.util.HashSet;
 import java.util.*;
 
-
-
-public class MyGraph {
-    public LinkedList<Integer>[] adjazenzListe;
-
-    public MyGraph() {
-        this.adjazenzListe = new LinkedList[5];
-        for (int i = 0; i < this.adjazenzListe.length; i++) {
-            if (!(this.adjazenzListe[i] instanceof LinkedList)) {
-                this.adjazenzListe[i] = new LinkedList<Integer>();
-            }
-            this.adjazenzListe[i].add(i);
-        }
-    }
+public class MyGraph implements Graph {
+    private HashSet<Integer> vertexIds;
+    private HashMap<Integer, LinkedList<Integer>> adjacencyList;
 
     public void addVertex (Integer v) {
-        LinkedList<Integer>[] newAdjazenzListe = new LinkedList[this.adjazenzListe.length + 1];
-        for (int i = 0; i < this.adjazenzListe.length; i ++) {
-            newAdjazenzListe[i] = this.adjazenzListe[i];
-        }
-        newAdjazenzListe[this.adjazenzListe.length] = new LinkedList<Integer>();
-        newAdjazenzListe[this.adjazenzListe.length].add(v);
-
-               this.adjazenzListe = newAdjazenzListe;
+        this.vertexIds.add(v);
     }
-    public static void main (String[] args) {
-        MyGraph graph1 = new MyGraph();
-        for (LinkedList l: graph1.adjazenzListe) {
-            if (l.getFirst() != null) {
-                int x = (int)l.getFirst();
-                Iterator i = l.iterator();
-                while( i.hasNext()){
-                    System.out.println(i.next());
-                }
-
-
-
-            }
+    public void addEdge (Integer v, Integer w) {
+        if (!(adjacencyList.containsKey(v))) {
+            LinkedList<Integer> values = new LinkedList<>();
+            values.add(w);
+            adjacencyList.put(v, values);
+        } else {
+            LinkedList<Integer> values = new LinkedList<>();
+         values = adjacencyList.get(v);
+         values.add(w);
+         adjacencyList.remove(v);
+         adjacencyList.put(v, values);
         }
-        graph1.addVertex(7);
-        for (LinkedList l: graph1.adjazenzListe) {
-            if (l.getFirst() != null) {
-                int x = (int)l.getFirst();
-                Iterator i = l.iterator();
-                while (i.hasNext()){
-                    System.out.println(i.next());
-                }
-
-
-
-            }
+        if (!(adjacencyList.containsKey(w))) {
+            LinkedList<Integer> values = new LinkedList<>();
+            values.add(v);
+            adjacencyList.put(w, values);
+        } else {
+            LinkedList<Integer> values = new LinkedList<>();
+            values = adjacencyList.get(w);
+            values.add(v);
+            adjacencyList.remove(w);
+            adjacencyList.put(w, values);
         }
-        //graph1.getVertices();
-
     }
-    public HashSet<Integer> getVertices (){
-        HashSet<Integer> vertices = new HashSet<>();
-        for (LinkedList l: this.adjazenzListe) {
-            if (l.getFirst() != null) {
-                //vertices.add(l.getFirst());
-                System.out.println(l.getFirst());
+    public void deleteVertex (Integer v) {
+        vertexIds.remove(v);
+        adjacencyList.remove(v);
+        for (int i: adjacencyList.keySet()) {
+            LinkedList<Integer> values = new LinkedList<>();
+            values = adjacencyList.get(i);
+            if(values.getFirst() == v){
+                values.removeFirst();
+                adjacencyList.remove(i);
+                adjacencyList.put(i, values);
+            }
+            for (Iterator k = values.iterator(); k.hasNext();){
+                if(k.next() == v){
+                    values.removeFirst();
+                    adjacencyList.remove(i);
+                    adjacencyList.put(i, values);
+                }
             }
 
-
         }
-    return vertices;
+    }
+    public void deleteEdge (Integer w, Integer v){
+        LinkedList<Integer> values = new LinkedList<>();
+        values = adjacencyList.get(w);
+        values.remove(v);
+        adjacencyList.remove(w);
+        adjacencyList.put(w, values);
+        values = adjacencyList.get(v);
+        values.remove(w);
+        adjacencyList.remove(v);
+        adjacencyList.put(v, values);
+    }
+    public boolean contains (Integer v){
+        return vertexIds.contains(v);
+    }
+    public int degree (Integer v){
+        if(this.contains(v)){
+            return adjacencyList.get(v).size();
+        }
+        else {
+            return 0;
+            }
+        }
+    public boolean adjacent (Integer v, Integer w){
+        if (this.contains(v) && this.contains(w)) {
+            LinkedList<Integer> values = new LinkedList<>();
+            values = adjacencyList.get(v);
+            return values.contains(w);
+        }
+        return false;
+    }
+    public Graph getCopy(){
+        MyGraph copy = new MyGraph();
+        for (int id: this.vertexIds) {
+            copy.addVertex(id);
+        }
+        LinkedList<Integer> values = new LinkedList<>();
+        for (int i: adjacencyList.keySet()){
+            values = adjacencyList.get(i);
+            for (int v: values) {
+                addEdge(i,v);
+            }
+        }
+        return copy;
+    }
+    public Set<Integer> getNeighbors (Integer v){
+        LinkedList<Integer> values = new LinkedList<>();
+        HashSet<Integer> neighbors = new HashSet<>();
+        values = adjacencyList.get(v);
+        for (int i: values) {
+            neighbors.add(i);
+        }
+        return neighbors;
+    }
+    public int size (){
+        return vertexIds.size();
+    }
+    public int getEdgeCount (){
+        int counter = 0;
+        for (LinkedList<Integer> i: adjacencyList.values()) {
+            counter = counter + i.size();
+        }
+        return counter / 2;
+    }
+    public Set<Integer> getVertices (){
+        return vertexIds;
     }
 }

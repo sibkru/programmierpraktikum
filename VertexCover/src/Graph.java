@@ -29,7 +29,7 @@ public interface Graph {
      * @param v First Id of incident vertex
      * @param w Second ID of incident vertex
      */
-    public void deleteEdge (Integer u, Integer v);
+    public void deleteEdge (Integer w, Integer v);
     
     /**
      * Return whether the given vertex belongs to the graph
