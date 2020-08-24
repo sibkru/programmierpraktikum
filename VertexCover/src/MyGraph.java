@@ -1,4 +1,8 @@
 import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 
 public class MyGraph implements Graph {
     private HashSet<Integer> vertexIds;
@@ -83,7 +87,7 @@ public class MyGraph implements Graph {
         return false;
     }
     public Graph getCopy(){
-        MyGraph copy = new MyGraph();
+        MyGraph copy = new MyGraph("abc");
         for (int id: this.vertexIds) {
             copy.addVertex(id);
         }
@@ -117,5 +121,42 @@ public class MyGraph implements Graph {
     }
     public Set<Integer> getVertices (){
         return vertexIds;
+    }
+    public MyGraph (String path){
+        BufferedReader reader;
+        this.vertexIds = new HashSet<>();
+        this.adjacencyList = new HashMap<>();
+        HashSet<String> lines = new HashSet<>();
+        try {
+            reader = new BufferedReader(new FileReader(path));
+            String line = reader.readLine();
+            while(line != null){
+                lines.add(line);
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Iterator<String> it = lines.iterator();
+        String[] parts = new String[2];
+        int v, w;
+        //HashSet<String[]> parts = new HashSet<>();
+        while (it.hasNext()){
+            parts = it.next().split(" ");
+            v = Integer.parseInt(parts[0]);
+            w = Integer.parseInt(parts[1]);
+            this.addVertex(v);
+            this.addVertex(w);
+            this.addEdge(v, w);
+        }
+    }
+    public static void main (String[] args){
+        MyGraph graph0 = new MyGraph("C:\\Users\\t-jen\\OneDrive\\Desktop\\bio-dmela.mtx");
+        Set<Integer> vertices = graph0.getVertices();
+        Iterator it = vertices.iterator();
+        while( it.hasNext()){
+            System.out.println(it.next());
+        }
+        System.out.println(graph0.getEdgeCount());
     }
 }
