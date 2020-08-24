@@ -21,8 +21,8 @@ public class MyGraph {
         for (int i = 0; i < this.adjazenzListe.length; i ++) {
             newAdjazenzListe[i] = this.adjazenzListe[i];
         }
-        newAdjazenzListe[this.adjazenzListe.length - 1] = new LinkedList<Integer>();
-        newAdjazenzListe[this.adjazenzListe.length - 1].add(v);
+        newAdjazenzListe[this.adjazenzListe.length] = new LinkedList<Integer>();
+        newAdjazenzListe[this.adjazenzListe.length].add(v);
 
                this.adjazenzListe = newAdjazenzListe;
     }
@@ -45,7 +45,7 @@ public class MyGraph {
             if (l.getFirst() != null) {
                 int x = (int)l.getFirst();
                 Iterator i = l.iterator();
-                while( i.hasNext()){
+                while (i.hasNext()){
                     System.out.println(i.next());
                 }
 
